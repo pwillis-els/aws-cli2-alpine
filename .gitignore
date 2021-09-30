@@ -1,1 +1,2 @@
-run/alpine/*
+run/alpine/aports/community/aws-cli2/src/
+run/alpine/packager-privkey.rsa
