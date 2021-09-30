@@ -1,0 +1,36 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=aws-cli2
+pkgver=2.2.38
+pkgrel=0
+pkgdesc="Universal Command Line Interface v2 for Amazon Web Services"
+url="https://github.com/aws/aws-cli/tree/v2"
+arch="all"
+license="Apache-2.0"
+makedepends="py3-setuptools py3-distro python3-dev"
+depends="python3 groff py3-botocore py3-jmespath py3-s3transfer py3-docutils
+	py3-colorama py3-yaml py3-rsa py3-ruamel.yaml"
+checkdepends="py3-pytest"
+install=""
+subpackages="$pkgname-dev $pkgname-doc"
+source="https://github.com/kyleknap/aws-cli/archive/refs/heads/poc-sdist.zip"
+builddir="$srcdir/"
+
+build() {
+	cd "$builddir"
+	cd "aws-cli-poc-sdist"
+	ls -la
+	python3 setup.py build
+}
+
+check() {
+	pytest
+}
+
+package() {
+	python3 setup.py install --prefix=/usr --root="$pkgdir"
+}
+
+sha512sums="
+10c9822925ba4ea5ddd59e01c5b1337c0a3e89aa27529e2436ea3c876e1f87494838afc021a8143bec8948eead9b9ff55b34cd061b7fb7a6a9bccf09830815e9  poc-sdist.zip
+"
