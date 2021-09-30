@@ -1,0 +1,48 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=awscommon
+pkgver=0.6.9
+pkgrel=0
+pkgdesc="Core c99 package for AWS SDK for C. Includes cross-platform primitives, configuration, data structures, and error handling"
+url="https://github.com/awslabs/aws-c-common/tree/v${pkgver}"
+arch="all"
+license="Apache-2.0"
+makedepends="cmake"
+depends=""
+checkdepends=""
+install=""
+subpackages="$pkgname-dev"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/aws-c-common/archive/refs/tags/v${pkgver}.tar.gz"
+builddir="$srcdir/"
+
+
+build() {
+	# Disable buggy test under musl
+	sed -i -e 's/^add_test_case(sba_metrics)/#add_test_case(sba_metrics)/' "$srcdir/aws-c-common-${pkgver}/tests/CMakeLists.txt"
+
+	if [ "$CBUILD" != "$CHOST" ]; then
+		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
+	fi
+	cmake -B build \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DBUILD_SHARED_LIBS=True \
+		-DCMAKE_BUILD_TYPE=None \
+		$CMAKE_CROSSOPTS \
+		"aws-c-common-${pkgver}"
+	cmake --build build
+}
+
+check() {
+	#sed -i -e 's/add_test_case(sba_metrics)/#add_test_case(sba_metrics)/' build/tests/CMakeLists.txt
+	cd build
+	make test
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+}
+
+sha512sums="
+9e55b918ed53d15456c97a473d4433b9abc7c6d2d9c157d38ea1a319f2216024768749a0f2549a34c09432114181e014e13eb2a6429ab953a43c1154871c0ecb  awscommon-0.6.9.tar.gz
+"

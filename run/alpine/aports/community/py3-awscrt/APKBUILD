@@ -1,0 +1,34 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=py3-awscrt
+pkgver=0.12.3
+pkgrel=0
+pkgdesc="Python bindings for the AWS Common Runtime"
+url="https://github.com/awslabs/aws-crt-python/tree/v${pkgver}"
+arch="all"
+license="Apache-2.0"
+makedepends="py3-setuptools py3-distro python3-dev cmake"
+depends="python3 groff py3-botocore py3-jmespath py3-s3transfer py3-docutils
+    py3-colorama py3-yaml py3-rsa py3-ruamel.yaml"
+checkdepends="py3-pytest"
+install=""
+subpackages="$pkgname-dev $pkgname-doc"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/aws-crt-python/archive/refs/tags/v${pkgver}.tar.gz"
+builddir="$srcdir/"
+
+build() {
+	cd "aws-crt-python-${pkgver}"
+	python3 setup.py build
+}
+
+check() {
+	pytest
+}
+
+package() {
+	python3 setup.py install --prefix=/usr --root="$pkgdir"
+}
+
+sha512sums="
+d996992849819ae06c861bef97772fcd7adecb4a9e9570da567644ee937e5aec120c282814af16843b77433d70d8220cde9cd8473a79d64aeb1d2e28b170ff24  py3-awscrt-0.12.3.tar.gz
+"
