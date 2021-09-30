@@ -1,0 +1,44 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=aws-lc
+pkgver=0.0.1
+pkgrel=0
+pkgdesc="AWS-LC is a general-purpose cryptographic library maintained by the AWS Cryptography team for AWS and their customers."
+url="https://github.com/awslabs/aws-lc/tree/v${pkgver}"
+arch="all"
+license="BoringSSL/Apache-2.0"
+makedepends="cmake"
+depends=""
+checkdepends=""
+install=""
+subpackages="$pkgname-dev"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/${pkgname}/archive/refs/tags/v${pkgver}.tar.gz"
+builddir="$srcdir/"
+
+
+build() {
+	if [ "$CBUILD" != "$CHOST" ]; then
+		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
+	fi
+	cmake -B build \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=share \
+		-DBUILD_SHARED_LIBS=True \
+		-DCMAKE_BUILD_TYPE=None \
+		$CMAKE_CROSSOPTS \
+		"${pkgname}-${pkgver}"
+	cmake --build build
+}
+
+check() {
+	cd build
+	make all_tests
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+}
+
+sha512sums="
+3558c6849d02f58e522daaa407c4023ab56f579fe82ac0170ca0b99a4e0ca14e01215cfda69e054067ee2b120378d4655586f384e4bb1144f6590c0dd642080a  aws-lc-0.0.1.tar.gz
+"

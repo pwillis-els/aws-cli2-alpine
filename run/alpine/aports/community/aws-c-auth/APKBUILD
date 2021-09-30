@@ -1,0 +1,44 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=aws-c-auth
+pkgver=0.6.4
+pkgrel=0
+pkgdesc="C99 library implementation of AWS client-side authentication: standard credentials providers and signing."
+url="https://github.com/awslabs/${pkgname}/tree/v${pkgver}"
+arch="all"
+license="Apache-2.0"
+makedepends="cmake s2n-tls-dev aws-lc-dev"
+depends="s2n-tls aws-lc"
+checkdepends=""
+install=""
+subpackages="$pkgname-dev"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/${pkgname}/archive/refs/tags/v${pkgver}.tar.gz"
+builddir="$srcdir/"
+
+
+build() {
+	if [ "$CBUILD" != "$CHOST" ]; then
+		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
+	fi
+	cmake -B build \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=share \
+		-DBUILD_SHARED_LIBS=True \
+		-DCMAKE_BUILD_TYPE=None \
+		$CMAKE_CROSSOPTS \
+		"${pkgname}-${pkgver}"
+	cmake --build build
+}
+
+check() {
+	cd build
+	make tests
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+}
+
+sha512sums="
+5bf15a5e222c1c4986142adb94c1904f621316a846e6468427a265e5aabffad08fadf445519364789f21c984480d836345a2ac58c113b89abff9e1ce7b284217  aws-c-auth-0.6.4.tar.gz
+"

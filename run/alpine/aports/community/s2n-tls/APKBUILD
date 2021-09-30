@@ -1,0 +1,44 @@
+# Contributor: Peter Willis <p.willis@elsevier.com>
+# Maintainer: Peter Willis <p.willis@elsevier.com>
+pkgname=s2n-tls
+pkgver=1.1.0
+pkgrel=0
+pkgdesc="s2n : an implementation of the TLS/SSL protocols"
+url="https://github.com/aws/${pkgname}/tree/v${pkgver}"
+arch="all"
+license="Apache-2.0"
+makedepends="cmake openssl-dev"
+depends="openssl"
+checkdepends=""
+install=""
+subpackages="$pkgname-dev"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/aws/${pkgname}/archive/refs/tags/v${pkgver}.tar.gz"
+builddir="$srcdir/"
+
+
+build() {
+	if [ "$CBUILD" != "$CHOST" ]; then
+		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
+	fi
+	cmake -B build \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=share \
+		-DBUILD_SHARED_LIBS=True \
+		-DCMAKE_BUILD_TYPE=None \
+		$CMAKE_CROSSOPTS \
+		"${pkgname}-${pkgver}"
+	cmake --build build
+}
+
+check() {
+	cd build
+	make test
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+}
+
+sha512sums="
+3f7631a9268f1abc755bbf11ee20b1953fc77eb460cc1445f86be4b4b3d01025e158ff670cd1ff8d3a558e492627ba8e5583eac60805923c515957881f4ea714  s2n-tls-1.1.0.tar.gz
+"
