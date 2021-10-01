@@ -7,8 +7,8 @@ pkgdesc=" Aws Crypto Abstraction Layer: Cross-Platform, C99 wrapper for cryptogr
 url="https://github.com/awslabs/${pkgname}/tree/v${pkgver}"
 arch="all"
 license="Apache-2.0"
-makedepends="cmake aws-c-common-dev"
-depends="aws-c-common"
+makedepends="cmake aws-c-common-dev aws-lc-dev"
+depends="aws-c-common aws-lc"
 checkdepends=""
 install=""
 subpackages="$pkgname-dev"
@@ -17,13 +17,12 @@ builddir="$srcdir/"
 
 
 build() {
-	ash -l
 	if [ "$CBUILD" != "$CHOST" ]; then
 		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
 	fi
 	cmake -B build \
 		-DCMAKE_INSTALL_PREFIX=/usr \
-		-DCMAKE_INSTALL_LIBDIR=share \
+		-DCMAKE_INSTALL_LIBDIR=lib \
 		-DBUILD_SHARED_LIBS=True \
 		-DCMAKE_BUILD_TYPE=None \
 		$CMAKE_CROSSOPTS \
@@ -38,6 +37,10 @@ check() {
 
 package() {
 	DESTDIR="$pkgdir" cmake --install build
+	rm -f "$pkgdir"/usr/bin/sha256_profile
+	mkdir -p "$pkgdir"/usr/share/cmake/Modules
+	mv "$pkgdir"/usr/lib/aws-c-cal/cmake/ "$pkgdir"/usr/share/cmake/Modules/aws-c-cal
+	rmdir "$pkgdir"/usr/lib/aws-c-cal
 }
 
 sha512sums="

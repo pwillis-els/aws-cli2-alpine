@@ -7,20 +7,29 @@ pkgdesc="C99 library implementation of AWS client-side authentication: standard 
 url="https://github.com/awslabs/${pkgname}/tree/v${pkgver}"
 arch="all"
 license="Apache-2.0"
-makedepends="cmake s2n-tls-dev aws-lc-dev"
-depends="s2n-tls aws-lc"
+makedepends="cmake s2n-tls-dev aws-lc-dev aws-c-cal-dev"
+depends="s2n-tls aws-lc aws-c-cal"
 checkdepends=""
 install=""
 subpackages="$pkgname-dev"
-source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/${pkgname}/archive/refs/tags/v${pkgver}.tar.gz"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/${pkgname}/archive/refs/tags/v${pkgver}.tar.gz
+cmake-path.patch"
 builddir="$srcdir/"
 
+
+prepare() {
+	set -x
+	default_prepare
+	#update_config_sub
+	#update_config_guess
+}
 
 build() {
 	if [ "$CBUILD" != "$CHOST" ]; then
 		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
 	fi
 	cmake -B build \
+		-DCMAKE_MODULE_PATH=/usr/share/cmake/Modules/aws-c-cal \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_INSTALL_LIBDIR=share \
 		-DBUILD_SHARED_LIBS=True \
@@ -41,4 +50,5 @@ package() {
 
 sha512sums="
 5bf15a5e222c1c4986142adb94c1904f621316a846e6468427a265e5aabffad08fadf445519364789f21c984480d836345a2ac58c113b89abff9e1ce7b284217  aws-c-auth-0.6.4.tar.gz
+1dbf1b8f270963d353178a90d883edb7e6de2fb8925a8c5e9b904309bf0f05812f480b2e02c86ab8b9597e95fb29ee3ac05c41fb5b026f531ce3eadaa36a1648  cmake-path.patch
 "

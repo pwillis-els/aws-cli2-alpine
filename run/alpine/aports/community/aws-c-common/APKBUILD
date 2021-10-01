@@ -23,12 +23,9 @@ build() {
 	if [ "$CBUILD" != "$CHOST" ]; then
 		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
 	fi
-
-	#	-DCMAKE_PREFIX_PATH=/usr/share/cmake/Modules \
-
 	cmake -B build \
 		-DCMAKE_INSTALL_PREFIX=/usr \
-		-DCMAKE_INSTALL_LIBDIR=share \
+		-DCMAKE_INSTALL_LIBDIR=lib \
 		-DBUILD_SHARED_LIBS=True \
 		-DCMAKE_BUILD_TYPE=None \
 		$CMAKE_CROSSOPTS \
@@ -44,6 +41,12 @@ check() {
 
 package() {
 	DESTDIR="$pkgdir" cmake --install build
+	mkdir -p "$pkgdir"/usr/share/cmake/Modules
+	ls "$pkgdir"/usr/share/cmake | grep -v '^Modules$' | xargs -I{} -n1 mv -v "$pkgdir"/usr/lib/cmake/{} "$pkgdir"/usr/share/cmake/Modules/
+
+	mkdir -p "$pkgdir"/usr/share/cmake/Modules/aws-c-common
+	mv "$pkgdir"/usr/lib/aws-c-common/cmake/* "$pkgdir"/usr/share/cmake/Modules/aws-c-common/
+	rmdir "$pkgdir"/usr/lib/aws-c-common/cmake "$pkgdir"/usr/lib/aws-c-common
 }
 
 sha512sums="

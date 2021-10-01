@@ -9,3 +9,5 @@ cp -dR /workspace/home/alpine /home
 for i in .profile.d/*.sh ; do $i ; done
 
 set +x
+
+alias ll='ls -l'
