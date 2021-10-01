@@ -40,8 +40,8 @@ package() {
 	mkdir -p "$pkgdir"/usr/share/cmake/Modules
 	#ls "$pkgdir"/usr/share/cmake | grep -v '^Modules$' | xargs -I{} -n1 mv -v "$pkgdir"/usr/share/cmake/{} "$pkgdir"/usr/share/cmake/Modules/
 	for i in ssl crypto AWSLC ; do 
-		mv "$pkgdir"/usr/lib/$i/cmake/* "$pkgdir"/usr/share/cmake/Modules/
-		rmdir "$pkgdir"/usr/lib/$i/cmake "$pkgdir"/usr/lib/$i
+		cp -vr "$pkgdir"/usr/lib/$i/cmake/* "$pkgdir"/usr/share/cmake/Modules/
+		rm -rf "$pkgdir"/usr/lib/$i/cmake
 	done
 }
 
