@@ -38,8 +38,8 @@ check() {
 package() {
 	DESTDIR="$pkgdir" cmake --install build
 	mkdir -p "$pkgdir"/usr/share/cmake/Modules
-	mv "$pkgdir"/usr/lib/s2n/cmake/ "$pkgdir"/usr/share/cmake/Modules/s2n
-	rmdir "$pkgdir"/usr/lib/s2n
+	mv "$pkgdir"/usr/lib/s2n/cmake/* "$pkgdir"/usr/share/cmake/Modules/
+	rmdir "$pkgdir"/usr/lib/s2n/cmake "$pkgdir"/usr/lib/s2n
 }
 
 sha512sums="

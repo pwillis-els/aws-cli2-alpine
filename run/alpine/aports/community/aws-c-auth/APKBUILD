@@ -28,8 +28,9 @@ build() {
 	if [ "$CBUILD" != "$CHOST" ]; then
 		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
 	fi
+	#	-DCMAKE_MODULE_PATH=/usr/share/cmake/Modules/aws-c-cal \
+
 	cmake -B build \
-		-DCMAKE_MODULE_PATH=/usr/share/cmake/Modules/aws-c-cal \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_INSTALL_LIBDIR=share \
 		-DBUILD_SHARED_LIBS=True \

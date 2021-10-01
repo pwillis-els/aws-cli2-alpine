@@ -39,10 +39,10 @@ package() {
 	DESTDIR="$pkgdir" cmake --install build
 	mkdir -p "$pkgdir"/usr/share/cmake/Modules
 	#ls "$pkgdir"/usr/share/cmake | grep -v '^Modules$' | xargs -I{} -n1 mv -v "$pkgdir"/usr/share/cmake/{} "$pkgdir"/usr/share/cmake/Modules/
-	mv "$pkgdir"/usr/lib/ssl/cmake/ "$pkgdir"/usr/share/cmake/Modules/ssl
-	mv "$pkgdir"/usr/lib/crypto/cmake/ "$pkgdir"/usr/share/cmake/Modules/crypto
-	mv "$pkgdir"/usr/lib/AWSLC/cmake/ "$pkgdir"/usr/share/cmake/Modules/AWSLC
-	rmdir "$pkgdir"/usr/lib/ssl "$pkgdir"/usr/lib/crypto "$pkgdir"/usr/lib/AWSLC
+	for i in ssl crypto AWSLC ; do 
+		mv "$pkgdir"/usr/lib/$i/cmake/* "$pkgdir"/usr/share/cmake/Modules/
+		rmdir "$pkgdir"/usr/lib/$i/cmake "$pkgdir"/usr/lib/$i
+	done
 }
 
 sha512sums="

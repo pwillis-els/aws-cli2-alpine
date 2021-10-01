@@ -1,14 +1,14 @@
 # Contributor: Peter Willis <p.willis@elsevier.com>
 # Maintainer: Peter Willis <p.willis@elsevier.com>
-pkgname=aws-c-cal
-pkgver=0.5.12
+pkgname=aws-c-compression
+pkgver=0.2.14
 pkgrel=0
-pkgdesc=" Aws Crypto Abstraction Layer: Cross-Platform, C99 wrapper for cryptography primitives. "
+pkgdesc=" C99 implementation of huffman encoding/decoding "
 url="https://github.com/awslabs/${pkgname}/tree/v${pkgver}"
 arch="all"
 license="Apache-2.0"
-makedepends="cmake aws-c-common-dev aws-lc-dev"
-depends="aws-c-common aws-lc"
+makedepends="cmake aws-c-common-dev"
+depends="aws-c-common"
 checkdepends=""
 install=""
 subpackages="$pkgname-dev"
@@ -16,13 +16,20 @@ source="${pkgname}-${pkgver}.tar.gz::https://github.com/awslabs/${pkgname}/archi
 builddir="$srcdir/"
 
 
+prepare() {
+	set -x
+	default_prepare
+	#update_config_sub
+	#update_config_guess
+}
+
 build() {
 	if [ "$CBUILD" != "$CHOST" ]; then
 		CMAKE_CROSSOPTS="-DCMAKE_SYSTEM_NAME=Linux -DCMAKE_HOST_SYSTEM_NAME=Linux"
 	fi
 	cmake -B build \
 		-DCMAKE_INSTALL_PREFIX=/usr \
-		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DCMAKE_INSTALL_LIBDIR=share \
 		-DBUILD_SHARED_LIBS=True \
 		-DCMAKE_BUILD_TYPE=None \
 		$CMAKE_CROSSOPTS \
@@ -32,17 +39,13 @@ build() {
 
 check() {
 	cd build
-	CTEST_OUTPUT_ON_FAILURE=TRUE ctest
+	make tests
 }
 
 package() {
 	DESTDIR="$pkgdir" cmake --install build
-	rm -f "$pkgdir"/usr/bin/sha256_profile
-	mkdir -p "$pkgdir"/usr/share/cmake/Modules
-	mv "$pkgdir"/usr/lib/aws-c-cal/cmake/* "$pkgdir"/usr/share/cmake/Modules/
-	rmdir "$pkgdir"/usr/lib/aws-c-cal/cmake "$pkgdir"/usr/lib/aws-c-cal
 }
 
 sha512sums="
-43dd73a5f5405e3c842ae6bf4921cbdefdbd6f23ff8583924bde12a735b74c01a81d1229ede4be98ab61a471737a58135bf92d4e5bf58ad5f5eeacec2c4691f6  aws-c-cal-0.5.12.tar.gz
+2458f336d80480fbe96c67c5f0d8801dca1de2844ea6e95c647510f16808c189947a7e5b1c9b9a580e9bef850c48aa825e85ef4e19f6837354214945e7045f0c  aws-c-compression-0.2.14.tar.gz
 "
